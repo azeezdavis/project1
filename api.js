@@ -9,15 +9,18 @@ let moviesSearchable = document.querySelector('#movies-searchable')
 
 // created a function that loops through our movie path and returns the Image
 function movieSection(movies) {
-    return movies.map((movie)=> {
-        return `<img src=${imgUrl + movie.poster_path} data-movie-id=${movie.id}/>`
-    
+    return movies.map((movie) => {
+        if (movie.poster_path) {
+            return `<img 
+        src=${imgUrl + movie.poster_path} 
+        data-movie-id=${movie.id}/>`
+        }
     })
 }
 
 function createMovieContainer(movies) {
     const movieEl = document.createElement('div')
-    movieEl.setAttribute('class','movie')
+    movieEl.setAttribute('class', 'movie')
 
     const movieTemplate = `
     <section class="section">
@@ -29,9 +32,20 @@ function createMovieContainer(movies) {
     </div>`
 
 
-movieEl.innerHTML = movieTemplate;
-return movieEl
+    movieEl.innerHTML = movieTemplate;
+    return movieEl
 }
+
+function renderSearhableMovies(data) {
+    moviesSearchable.innerHTML = ''
+    const movies = data.results;
+    const movieBlock = createMovieContainer(movies)
+    // create an html element to dumb our value in
+    moviesSearchable.appendChild(movieBlock);
+    console.log('Data :', data);
+}
+
+
 
 buttonEl.onclick = function (event) {
     event.preventDefault();
@@ -41,16 +55,11 @@ buttonEl.onclick = function (event) {
 
     fetch(newUrl)
         .then((res) => res.json())
-        .then((data) => {
-            // data.result[]
-            const movies = data.results;
-           const movieBlock = createMovieContainer(movies)
-           moviesSearchable.appendChild(movieBlock);
-            console.log('Data :', data);
-        })
+        .then(renderSearhableMovies)
         .catch((error) => {
             console.log('Error :', error);
-        });
+        })
+    inputEl.value = ''
     console.log('value :', value);
 }
 
@@ -73,5 +82,5 @@ buttonEl.onclick = function (event) {
 
 
 
-    
+
 
